@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>لعبة الحروف: ف ق ك</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e6f3ff;--ink:#2a2350;--card:#fff;--pu:#7a4dd8;--or:#f07a24;--gr:#1fa774}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:"Baloo Bhaijaan 2",Tahoma,Arial,sans-serif;font-weight:500}
+#app{max-width:620px;margin:0 auto;padding:14px 14px 70px;text-align:center}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.stars{background:#fff;border-radius:20px;padding:4px 14px;font-weight:800;font-size:20px}
+.back{border:0;background:#fff;border-radius:20px;padding:6px 14px;font:inherit;font-size:18px;color:var(--ink)}
+h1{font-size:30px;margin:6px 0 2px;font-weight:800}
+h2{font-size:24px;margin:6px 0;font-weight:800}
+p.sub{margin:0 0 12px;font-size:18px}
+.row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.big{border:0;border-radius:26px;width:30%;min-width:96px;aspect-ratio:1;font:inherit;font-size:76px;font-weight:800;color:#fff;box-shadow:0 6px 0 rgba(0,0,0,.18)}
+.big:active,.btn:active{transform:translateY(3px)}
+.btn{display:block;width:100%;border:0;border-radius:22px;padding:14px;margin:10px 0;font:inherit;font-size:24px;font-weight:800;color:#fff;box-shadow:0 5px 0 rgba(0,0,0,.18)}
+.card{background:var(--card);border-radius:24px;padding:12px;box-shadow:0 4px 0 rgba(0,0,0,.08)}
+.forms{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.forms .card{cursor:pointer;border:0;font:inherit;color:inherit}
+.fl{font-size:70px;font-weight:800;line-height:1.1}
+.em{font-size:44px}
+.wd{font-size:30px;font-weight:800}
+.lab{font-size:17px;opacity:.75}
+.wordbig{font-size:64px;font-weight:800;margin:4px 0}
+.wordbig b{color:var(--hl);background:#fff3b8;border-radius:12px;padding:0 4px}
+.emb{font-size:96px;line-height:1.1}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.opts .btn{margin:0;font-size:22px;padding:16px 4px}
+.play{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.play button{border:0;background:#fff;border-radius:22px;padding:12px 4px;font:inherit;box-shadow:0 5px 0 rgba(0,0,0,.12)}
+.play button .em{display:block;font-size:52px}
+.play button span{font-size:28px;font-weight:800}
+.wrap{position:relative;margin:8px auto;border-radius:26px;background:#fff;touch-action:none;box-shadow:0 4px 0 rgba(0,0,0,.08)}
+.wrap canvas{position:absolute;inset:0;border-radius:26px;touch-action:none}
+.bar{display:flex;gap:6px;justify-content:center;margin:6px 0}
+.dot{width:14px;height:14px;border-radius:50%;background:#cfd8e8}.dot.on{background:var(--c)}
+#t{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%) scale(.6);background:#fff;border-radius:28px;padding:16px 28px;font-size:34px;font-weight:800;box-shadow:0 10px 30px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:.25s;z-index:9}
+#t.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.shake{animation:sh .3s}@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+footer{position:fixed;bottom:0;left:0;right:0;text-align:center;font-size:15px;padding:8px;background:rgba(255,255,255,.8)}
+.meter{height:14px;background:#fff;border-radius:10px;overflow:hidden;margin:6px auto;max-width:340px}.meter i{display:block;height:100%;background:var(--c);border-radius:10px;transition:width .4s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div><div id="t"></div>
+<footer>created by T.Badria Alfalahi</footer>
+<script>
+const $=s=>document.querySelector(s),app=$('#app');let stars=0;
+const D={
+'ف':{n:'فاء',c:'#7a4dd8',s:[['فيل','🐘'],['فراشة','🦋']],m:[['مفتاح','🔑'],['قفل','🔒']],e:[['خروف','🐑'],['رغيف','🥖']]},
+'ق':{n:'قاف',c:'#f07a24',s:[['قمر','🌙'],['قلم','✏️']],m:[['بقرة','🐄'],['سقف','🏠']],e:[['طبق','🍽️'],['ورق','📄']]},
+'ك':{n:'كاف',c:'#1fa774',s:[['كتاب','📖'],['كرة','⚽']],m:[['سمكة','🐟'],['سكر','🍬']],e:[['ديك','🐓'],['ملك','👑']]}
+};
+const NEU=[['باب','🚪'],['شمس','☀️'],['نجمة','⭐'],['سيارة','🚗'],['موزة','🍌'],['وردة','🌹'],['جمل','🐪'],['بطة','🦆'],['حصان','🐴']];
+const PN={s:'أول الكلمة',m:'وسط الكلمة',e:'آخر الكلمة'};
+const sh=a=>[...a].sort(()=>Math.random()-.5);
+function say(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='ar-SA';u.rate=.8;speechSynthesis.speak(u)}catch(e){}}
+function beep(ok){try{const a=new(window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type='sine';g.gain.value=.08;const n=ok?[660,880]:[220];n.forEach((f,i)=>o.frequency.setValueAtTime(f,a.currentTime+i*.12));o.start();o.stop(a.currentTime+(ok?.28:.25))}catch(e){}}
+function toast(m,ok=true){const t=$('#t');t.textContent=m;t.classList.add('on');beep(ok);setTimeout(()=>t.classList.remove('on'),900)}
+const top_=(back)=>`<div class="top"><button class="back" onclick="${back}">رجوع ↩</button><div class="stars">⭐ ${stars}</div></div>`;
+const all=l=>[...D[l].s.map(w=>[...w,'s']),...D[l].m.map(w=>[...w,'m']),...D[l].e.map(w=>[...w,'e'])];
+const hl=(w,l)=>{const i=w.indexOf(l);return w.slice(0,i)+'<b>'+l+'</b>'+w.slice(i+1)};
+
+function home(){
+ app.innerHTML=`<div class="top"><span></span><div class="stars">⭐ ${stars}</div></div>
+ <h1>🌈 لعبة الحروف 🌈</h1><p class="sub">اختر حرفًا وهيا نلعب!</p>
+ <div class="row">${Object.keys(D).map(l=>`<button class="big" style="background:${D[l].c}" onclick="menu('${l}')">${l}</button>`).join('')}</div>`;
+}
+function menu(l){
+ const c=D[l].c;
+ app.innerHTML=`${top_('home()')}<div class="fl" style="font-size:110px;color:${c}">${l}</div><h2>حرف ${D[l].n}</h2>
+ <button class="btn" style="background:${c}" onclick="learn('${l}')">👀 تعرّف على الحرف</button>
+ <button class="btn" style="background:${c}" onclick="trace('${l}',0)">✍️ تدرّب على الكتابة</button>
+ <button class="btn" style="background:${c}" onclick="where('${l}',0,null)">🔍 اقرأ وأين الحرف؟</button>
+ <button class="btn" style="background:${c}" onclick="play('${l}',0,null)">🎮 العب</button>`;
+}
+function learn(l){
+ const d=D[l],c=d.c,f=[[l,'وحدي',null],[l+'ـ','أول الكلمة',d.s[0]],['ـ'+l+'ـ','وسط الكلمة',d.m[0]],['ـ'+l,'آخر الكلمة',d.e[0]]];
+ app.innerHTML=`${top_(`menu('${l}')`)}<h2>حرف ${d.n} له أشكال</h2><p class="sub">اضغط على البطاقة لتسمع</p>
+ <div class="forms">${f.map((x,i)=>`<button class="card" onclick="say('${x[2]?x[2][0]:d.n}')"><div class="fl" style="color:${c}">${x[0]}</div><div class="lab">${x[1]}</div>${x[2]?`<div class="em">${x[2][1]}</div><div class="wd">${hl(x[2][0],l).replace('<b>',`<b style="color:${c}">`)}</div>`:`<div class="em">🔤</div><div class="wd">${d.n}</div>`}</button>`).join('')}</div>`;
+}
+const PH={'١':'تتبّع الحرف','٢':'تتبّع بخط باهت','٣':'اكتب الكلمة','٤':'اكتب من ذاكرتك'};
+function stages(l){
+ const d=D[l],F=[[l,'الحرف وحده'],[l+'ـ','في أول الكلمة'],['ـ'+l+'ـ','في وسط الكلمة'],['ـ'+l,'في آخر الكلمة']],A=[];
+ F.forEach(f=>A.push({t:f[0],lab:f[1],g:1,th:.65,ph:'١'}));
+ F.forEach(f=>A.push({t:f[0],lab:f[1],g:.35,th:.7,ph:'٢'}));
+ [d.s[0],d.m[0],d.e[0]].forEach(w=>A.push({t:w[0],lab:w[0],e:w[1],g:1,th:.6,ph:'٣'}));
+ F.forEach(f=>A.push({t:f[0],lab:f[1]+': احفظ الشكل ثم اكتبه',g:0,mem:1,th:.6,ph:'٤'}));
+ return A}
+function trace(l,i){
+ const c=D[l].c,ST=stages(l);
+ if(i>=ST.length){stars+=3;toast('أنت كاتب ماهر! 🏆');return setTimeout(()=>menu(l),1200)}
+ const st=ST[i],t=st.t,S=Math.min(340,innerWidth-32);
+ app.innerHTML=`${top_(`menu('${l}')`)}<h2>${PH[st.ph]}</h2><p class="sub">${st.e?`<span class="em">${st.e}</span> `:''}${st.lab} (${i+1}/${ST.length})</p>
+ <div class="meter" style="--c:${c}"><i style="width:${i/ST.length*100}%"></i></div>
+ <div class="wrap" style="width:${S}px;height:${S}px"><canvas id="g" width="${S}" height="${S}"></canvas><canvas id="d" width="${S}" height="${S}"></canvas></div>
+ <div class="meter" style="--c:#f5b301"><i id="mi" style="width:0"></i></div><div class="lab" id="acc">الدقة: --</div>
+ <div class="row"><button class="back" id="ok">✔ تحقق</button><button class="back" id="clr">🧽 امسح</button>${st.mem?'<button class="back" id="eye">👁 أرني</button>':''}<button class="back" id="skip">التالي ⬅</button></div>`;
+ const f='"Baloo Bhaijaan 2",Tahoma,Arial,sans-serif',g=$('#g').getContext('2d'),d=$('#d'),x=d.getContext('2d');
+ let mask,maskD,show,on=false,done=false;
+ const build=()=>{let sz=S*.8;g.font='800 '+sz+'px '+f;const w=g.measureText(t).width;if(w>S*.78)sz*=S*.78/w;
+  const P=(q,col,lw)=>{q.font='800 '+sz+'px '+f;q.textAlign='center';q.textBaseline='middle';q.fillStyle=q.strokeStyle=col;q.lineJoin='round';if(lw){q.lineWidth=lw;q.strokeText(t,S/2,S/2)}q.fillText(t,S/2,S/2)};
+  const mk=lw=>{const m=document.createElement('canvas');m.width=m.height=S;const mx=m.getContext('2d');P(mx,'#000',lw);return mx.getImageData(0,0,S,S).data};
+  mask=mk(0);maskD=mk(S*.05);
+  show=ms=>{g.clearRect(0,0,S,S);g.globalAlpha=st.mem?1:st.g;P(g,'#cfc3f6',0);g.globalAlpha=1;if(ms)setTimeout(()=>g.clearRect(0,0,S,S),ms)};
+  show(st.mem?2500:0)};
+ build();document.fonts&&document.fonts.ready.then(build);
+ x.lineWidth=S*.06;x.lineCap=x.lineJoin='round';x.strokeStyle=c;
+ const ev=()=>{const s=x.getImageData(0,0,S,S).data;let tot=0,cov=0,sk=0,ins=0;
+  for(let y=0;y<S;y+=3)for(let q=0;q<S;q+=3){const k=(y*S+q)*4+3;if(mask[k]>128){tot++;if(s[k]>0)cov++}if(s[k]>0){sk++;if(maskD[k]>128)ins++}}
+  return[tot?cov/tot:0,sk?ins/sk:0,sk]};
+ const pass=(cv,pr)=>{const a=Math.round((cv+pr)/2*100),n=a>=85?3:a>=70?2:1;done=true;stars+=n;$('#mi').style.width=a+'%';$('#acc').textContent='الدقة: '+a+'%';toast('الدقة '+a+'% '+'⭐'.repeat(n));setTimeout(()=>trace(l,i+1),1300)};
+ const pt=e=>{const r=d.getBoundingClientRect();return[(e.clientX-r.left)*S/r.width,(e.clientY-r.top)*S/r.height]};
+ d.onpointerdown=e=>{if(done)return;on=true;d.setPointerCapture(e.pointerId);const[a,b]=pt(e);x.beginPath();x.moveTo(a,b);x.lineTo(a+.1,b+.1);x.stroke()};
+ d.onpointermove=e=>{if(!on)return;const[a,b]=pt(e);x.lineTo(a,b);x.stroke()};
+ d.onpointerup=()=>{if(!on||done)return;on=false;const[cv,pr]=ev();if(cv>=st.th+.1&&pr>=st.th+.1)pass(cv,pr)};
+ $('#ok').onclick=()=>{if(done)return;const[cv,pr,sk]=ev();if(!sk)return toast('اكتب بإصبعك أولًا ✍️',false);
+  if(cv>=st.th&&pr>=st.th)return pass(cv,pr);
+  const a=Math.round((cv+pr)/2*100);$('#mi').style.width=a+'%';$('#acc').textContent='الدقة: '+a+'%';
+  toast(cv<st.th?'غطِّ الحرف كله 🖍️':'ابقَ داخل الحرف 🎯',false);setTimeout(()=>x.clearRect(0,0,S,S),700)};
+ $('#clr').onclick=()=>{x.clearRect(0,0,S,S);$('#mi').style.width=0;$('#acc').textContent='الدقة: --'};
+ if(st.mem)$('#eye').onclick=()=>show(1800);
+ $('#skip').onclick=()=>trace(l,i+1);
+}
+function where(l,n,list){
+ const c=D[l].c;list=list||sh(all(l));
+ if(n>=list.length)return end(l);
+ const [w,e,p]=list[n];
+ app.innerHTML=`${top_(`menu('${l}')`)}<h2>أين حرف <span style="color:${c}">${l}</span> في الكلمة؟</h2>
+ <div class="bar" style="--c:${c}">${list.map((_,k)=>`<span class="dot ${k<=n?'on':''}"></span>`).join('')}</div>
+ <div class="card"><div class="emb">${e}</div><div class="wordbig" style="--hl:${c}">${hl(w,l)}</div><button class="back" onclick="say('${w}')">🔊 اسمع</button></div>
+ <div class="opts">${['s','m','e'].map(k=>`<button class="btn" style="background:${c}" data-k="${k}">${PN[k]}</button>`).join('')}</div>`;
+ say(w);
+ document.querySelectorAll('.opts .btn').forEach(b=>b.onclick=()=>{if(b.dataset.k===p){stars++;toast('أحسنت! 🎉');setTimeout(()=>where(l,n+1,list),1000)}else{b.classList.add('shake');toast('حاول مرة أخرى 💪',false)}});
+}
+function play(l,n,list){
+ const c=D[l].c;list=list||sh(all(l)).map(w=>[w,sh(NEU).slice(0,2)]);
+ if(n>=list.length)return end(l);
+ const [cw,ds]=list[n],opts=sh([cw,...ds]);
+ app.innerHTML=`${top_(`menu('${l}')`)}<h2>أي كلمة فيها حرف <span style="color:${c}">${l}</span>؟</h2>
+ <div class="bar" style="--c:${c}">${list.map((_,k)=>`<span class="dot ${k<=n?'on':''}"></span>`).join('')}</div>
+ <div class="fl" style="font-size:90px;color:${c}">${l}</div>
+ <div class="play">${opts.map((o,i)=>`<button data-i="${i}"><span class="em">${o[1]}</span><span>${o[0]}</span></button>`).join('')}</div>
+ <p class="sub" style="margin-top:14px"><button class="back" id="sp">🔊 اسمع الكلمات</button></p>`;
+ $('#sp').onclick=()=>say(opts.map(o=>o[0]).join('، '));
+ document.querySelectorAll('.play button').forEach(b=>b.onclick=()=>{const o=opts[b.dataset.i];say(o[0]);
+  if(o[0].includes(l)){stars++;toast('أحسنت! 🎉');setTimeout(()=>play(l,n+1,list),1000)}else{b.classList.add('shake');toast('حاول مرة أخرى 💪',false)}});
+}
+function end(l){
+ app.innerHTML=`${top_(`menu('${l}')`)}<div class="emb" style="margin-top:30px">🏆</div><h1>أحسنت يا بطل!</h1><p class="sub">جمعت ⭐ ${stars} نجمة</p>
+ <button class="btn" style="background:${D[l].c}" onclick="menu('${l}')">العب مرة أخرى</button>
+ <button class="btn" style="background:#555" onclick="home()">اختر حرفًا آخر</button>`;
+ beep(true);
+}
+home();
+</script>
+</body>
+</html>
